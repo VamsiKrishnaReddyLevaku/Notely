@@ -1,0 +1,12 @@
+# node stuff
+node_modules/
+
+# env files
+.env
+
+# uploads (optional – you can remove later if needed)
+uploads/
+
+# logs
+npm-debug.log*
+yarn-debug.log*

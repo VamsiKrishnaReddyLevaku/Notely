@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    .note {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📚 Student Notes</h1>
+  <input
+  type="text"
+  id="search"
+  placeholder="Search notes..."
+  oninput="searchNotes()"
+/>
+
+  <div id="notes"></div>
+
+<script>
+const API_URL = "http://localhost:5000/api/notes";
+
+function searchNotes() {
+  const query = document.getElementById("search").value.trim();
+
+  fetch(`${API_URL}?search=${encodeURIComponent(query)}`)
+    .then(res => {
+      if (!res.ok) {
+        throw new Error("HTTP error " + res.status);
+      }
+      return res.json();
+    })
+    .then(data => {
+      const container = document.getElementById("notes");
+      container.innerHTML = ""; 
+
+      if (data.length === 0) {
+        container.innerHTML = "<p>No notes found</p>";
+        return;
+      }
+
+      data.forEach(note => {
+        const div = document.createElement("div");
+        div.className = "note";
+
+        div.innerHTML = `
+          <h3>${note.title}</h3>
+          <p><b>Subject:</b> ${note.subject}</p>
+          <p><b>Course:</b> ${note.course}</p>
+          <p>${note.description}</p>
+          <a href="${note.fileUrl}" target="_blank">📄 View PDF</a>
+        `;
+
+        container.appendChild(div);
+      });
+    })
+    .catch(err => {
+      console.error("FETCH ERROR:", err);
+      alert("Failed to load notes");
+    });
+}
+
+// Load all notes on page load
+searchNotes();
+
+</script>
+
+</body>
+</html>
